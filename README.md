@@ -35,13 +35,14 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
 
 * Create an IAM role for AWS Glue with access to S3, Glue, and CloudWatch
 * Create a Glue JDBC connection to the RDS instance
+![Set Roles](End-to-End-Data-Pipeline/screenshots/IAM_Roles.png)
 
 ### 4. Create Glue Data Catalog (Crawler)
 
 * Run a Glue Crawler on `s3://.../raw/`
 * Automatically detect the CSV schema
 * Store metadata in the Glue Data Catalog
-
+![Crawler](End-to-End-Data-Pipeline/screenshots/glue-crawler.png)
 ### 5. Build Glue ETL Job
 
 * Use Glue Visual ETL
@@ -50,12 +51,13 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
   * Remove invalid or duplicate records (optional) ... 
 * Target: Amazon RDS
 * Automatically create the target table
+![ETL](End-to-End-Data-Pipeline/screenshots/ETL.png)
 
 ### 6. Validate Loaded Data
 
 * Connect to RDS using MySQL Workbench
 
-
+![MySQL Workbench](End-to-End-Data-Pipeline/screenshots/MySql WorkBench.png)
 
 ---
 
