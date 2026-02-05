@@ -57,7 +57,7 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
 
 * Connect to RDS using MySQL Workbench
 
-![MySQL Workbench](End-to-End-Data-Pipeline/screenshots/MySql WorkBench.png)
+![MySQL Workbench](End-to-End-Data-Pipeline/screenshots/MySqlWorkBench.png)
 
 ---
 
