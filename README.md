@@ -1,230 +1,70 @@
-# 🛒 Online Retail Data Pipeline (AWS ETL Project)
+# Online Retail Data Pipeline (AWS ETL Project)
 
-## 📌 Project Overview
+## Project Description
 
-This project demonstrates an **end-to-end ETL data pipeline on AWS**, using a real-world **Online Retail dataset**.
-The pipeline ingests raw CSV data from Amazon S3, processes and cleans it using AWS Glue, and loads the transformed data into an Amazon RDS database (MySQL or PostgreSQL) for analysis.
+This project implements an **end-to-end ETL data pipeline on AWS** using the Online Retail dataset. The pipeline ingests raw CSV data from Amazon S3, processes and cleans it with AWS Glue, and loads the transformed data into Amazon RDS (MySQL/PostgreSQL) for querying and analysis.
 
-This project is designed as a **hands-on data engineering portfolio project**, focusing on cloud-native ETL, schema management, and structured data loading.
-
----
-
-## 🏗️ Architecture
-
-```
-Local CSV
-   ↓
-Amazon S3 (raw)
-   ↓
-AWS Glue (Crawler + ETL Job)
-   ↓
-Amazon RDS (MySQL / PostgreSQL)
-```
-
-Optional output:
-
-```
-AWS Glue
-   ↓
-Amazon S3 (clean)
-```
+The project demonstrates practical skills in cloud-based data ingestion, schema discovery, data transformation, and relational database integration.
 
 ---
 
-## 🧰 Tech Stack
+## Architecture
 
-* **Amazon S3** – Raw and cleaned data storage
-* **AWS Glue** – Data Catalog, Crawlers, ETL Jobs
-* **Amazon RDS** – MySQL / PostgreSQL
-* **AWS IAM** – Access control and permissions
-* **SQL** – Data validation and querying
-* **CSV / Parquet** – Data formats
+
 
 ---
 
-## 📂 Project Structure (S3)
+## Implementation Steps
 
-```
-retail-data-pipeline-xxxx/
-├── raw/
-│   └── Online Retail.csv
-├── scripts/
-│   └── Glue ETL scripts (auto-generated)
-└── clean/        (optional)
-    └── processed output files
-```
+### 1. Store Raw Data on S3
 
----
+* Create an S3 bucket (e.g. `retail-data-pipeline`)
+* Upload `Online Retail.csv` to the `raw/` folder
+* (Optional) Create `clean/` folder for processed output
 
-## 🚀 Implementation Steps
+### 2. Create Target Database on RDS
 
-### Step 1: Prepare Raw Data on Amazon S3
+* Create an RDS instance (MySQL or PostgreSQL, Free Tier)
+* Configure database credentials
+* Enable inbound access on port `3306` (MySQL) or `5432` (PostgreSQL)
 
-1. Open **Amazon S3 Console**
-2. Create a bucket (e.g. `retail-data-pipeline-xxxx`)
-3. Inside the bucket, create folders:
+### 3. Configure IAM Role & Glue Connection
 
-   * `raw/` → upload `Online Retail.csv`
-   * `scripts/` → used by AWS Glue
-   * `clean/` (optional) → store cleaned data
+* Create an IAM role for AWS Glue with access to S3, Glue, and CloudWatch
+* Create a Glue JDBC connection to the RDS instance
 
----
+### 4. Create Glue Data Catalog (Crawler)
 
-### Step 2: Set Up Amazon RDS (Target Database)
+* Run a Glue Crawler on `s3://.../raw/`
+* Automatically detect the CSV schema
+* Store metadata in the Glue Data Catalog
 
-1. Go to **RDS Console → Create database**
-2. Choose **MySQL** or **PostgreSQL**
-3. Configuration:
+### 5. Build Glue ETL Job
 
-   * Template: **Free Tier**
-   * DB Identifier: `retail-db`
-   * Master username/password: save for later use
-4. Connectivity:
+* Use Glue Visual ETL
+* Source: Glue Data Catalog table
+* Transformations:
+  * Remove invalid or duplicate records (optional) ... 
+* Target: Amazon RDS
+* Automatically create the target table
 
-   * Public access: **Yes** (for learning/demo purposes)
-   * Security Group:
+### 6. Validate Loaded Data
 
-     * Allow inbound traffic on port `3306` (MySQL) or `5432` (PostgreSQL)
-     * Source: Your IP address and the same security group (for Glue access)
+* Connect to RDS using MySQL Workbench
+
+
 
 ---
 
-### Step 3: Configure IAM Role & Glue Connection
+## Key Learnings
 
-#### IAM Role
-
-1. Go to **IAM → Roles → Create role**
-2. Trusted entity: **AWS Glue**
-3. Attach policies:
-
-   * `AWSGlueServiceRole`
-   * `AmazonS3FullAccess`
-   * `CloudWatchLogsFullAccess`
-
-#### Glue Connection
-
-1. Open **AWS Glue → Connections → Create connection**
-2. Choose **JDBC**
-3. Provide:
-
-   * JDBC URL of the RDS instance
-   * Database username & password
-4. This enables Glue to connect to RDS
+* Designing a cloud-based ETL pipeline
+* Using AWS Glue Crawlers vs ETL Jobs
+* Performing schema transformation and data cleaning
+* Loading analytical data into Amazon RDS
 
 ---
 
-### Step 4: Create Glue Data Catalog (Crawler)
-
-1. Go to **AWS Glue → Crawlers → Create crawler**
-2. Data source:
-
-   * `s3://retail-data-pipeline-xxxx/raw/`
-3. IAM Role: select the Glue IAM role
-4. Output:
-
-   * Create a new database (e.g. `retail_catalog`)
-5. Run the crawler
-
-After completion, a table representing the CSV schema will appear in the Glue Data Catalog.
-
----
-
-### Step 5: Build Glue ETL Job
-
-1. Go to **AWS Glue → ETL Jobs → Visual ETL**
-2. **Source**:
-
-   * AWS Glue Data Catalog
-   * Database: `retail_catalog`
-   * Table: Crawled retail table
-3. **Transformations**:
-
-   * Change Schema:
-
-     * `InvoiceDate`: string → timestamp
-     * `Quantity`: string → integer
-   * Optional:
-
-     * Filter invalid records
-     * Drop duplicate rows
-4. **Target**:
-
-   * Type: MySQL / PostgreSQL
-   * Connection: Glue JDBC connection
-   * Database: RDS database
-   * Table name: `online_retail_clean`
-   * Handling strategy: **Create table in target**
-5. Save and run the job
-
----
-
-### Step 6: Validate Results
-
-#### Verify Data in RDS
-
-Use MySQL Workbench, DBeaver, or AWS Query Editor:
-
-```sql
-SELECT *
-FROM online_retail_clean
-LIMIT 10;
-```
-
-#### (Optional) Verify Clean Data on S3
-
-```
-s3://retail-data-pipeline-xxxx/clean/
-```
-
----
-
-## ⚠️ Important Notes
-
-* **Networking & VPC**
-
-  * If RDS is in a private subnet, create an **S3 Gateway Endpoint**
-  * Ensure AWS Glue runs in the same VPC and subnet as RDS
-
-* **Date Format Handling**
-
-  * The Online Retail dataset uses non-standard date formats
-  * Always validate and convert dates during schema transformation
-
-* **Cost Control**
-
-  * Delete RDS instances, Glue jobs, and S3 buckets after practice
-  * This project is intended to run within Free Tier limits
-
----
-
-## 🎯 Learning Outcomes
-
-* Build a production-style AWS ETL pipeline
-* Understand Glue Crawlers vs Glue ETL Jobs
-* Perform schema transformation and data cleaning
-* Load structured data into Amazon RDS
-* Gain practical cloud data engineering experience
-
----
-
-## 🚀 Future Improvements
-
-* Incremental data loading
-* Partitioned data storage on S3
-* Use Parquet format for performance optimization
-* Add AWS Glue Data Quality checks
-* Build dashboards using Amazon QuickSight
-
----
-
-## 📎 Dataset
-
-* Online Retail Dataset (UCI Machine Learning Repository)
-
----
-
-## 👤 Author
+## Author
 
 Nguyễn Văn Toàn
-
-Data Informatics | Aspiring Data Analyst / Data Engineer
