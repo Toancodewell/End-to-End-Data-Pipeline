@@ -51,14 +51,12 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
   * Remove invalid or duplicate records (optional) ... 
 * Target: Amazon RDS
 * Automatically create the target table
-![ETL](End-to-End-Data-Pipeline/screenshots/ETL.png)
+   ![ETL](End-to-End-Data-Pipeline/screenshots/ETL.png)
 
 ### 6. Validate Loaded Data
 
 * Connect to RDS using MySQL Workbench
-
-![MySQL Workbench](End-to-End-Data-Pipeline/screenshots/MySqlWorkBench.png)
-
+ (End-to-End-Data-Pipeline/screenshots/MySQL WorkBench.png)
 ---
 
 ## Key Learnings
@@ -69,7 +67,3 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
 * Loading analytical data into Amazon RDS
 
 ---
-
-## Author
-
-Nguyễn Văn Toàn
