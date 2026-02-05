@@ -9,6 +9,9 @@ The project demonstrates practical skills in cloud-based data ingestion, schema 
 ---
 
 ## Architecture
+## Architecture
+
+![ETL Architecture](End-to-End-Data-Pipeline/screenshots/Architecture.png)
 
 
 
